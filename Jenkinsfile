@@ -26,7 +26,7 @@ pipeline {
         stage('Generate HTML Report') {
             steps {
                 script {
-                    sh '''
+                    bat '''
                       echo "<html><head><title>Build Report</title></head><body>" > build_report.html
                       echo "<h1>Build Results</h1>" >> build_report.html
                       echo "<p>params.Environment chosen: ${params.ENVIRONMENT}</p>" >> build_report.html
