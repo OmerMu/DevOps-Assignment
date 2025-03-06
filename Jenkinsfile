@@ -32,8 +32,8 @@ pipeline {
 
                     // יצירת קובץ HTML עם התוצאה
                     def result = isPalindrome ? 
-                        "<p style='color:green;'>✅ The number ${number} is a palindrome.</p>" : 
-                        "<p style='color:red;'>❌ The number ${number} is NOT a palindrome.</p>"
+                        "<p style='color:green;'> The number ${number} is a palindrome.</p>" : 
+                        "<p style='color:red;'> The number ${number} is NOT a palindrome.</p>"
 
                     writeFile file: 'palindrome_report.html', text: """
                     <html>
