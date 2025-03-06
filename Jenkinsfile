@@ -21,6 +21,30 @@ pipeline {
                 }
             }
         }
+
+        stage('Generate HTML Report') {
+    steps {
+        script {
+            writeFile file: 'output.html', text: """
+            <html>
+            <head>
+                <title>Palindrome Check Report</title>
+                <style>
+                    body { font-family: Arial, sans-serif; text-align: center; }
+                    h1 { color: #333; }
+                    .result { font-size: 20px; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <h1>🔢 Palindrome Check Report</h1>
+                <p><strong>Number:</strong> ${params.NUMBER}</p>
+            </body>
+            </html>
+            """
+        }
+    }
+}
+
     }
 
     post {
