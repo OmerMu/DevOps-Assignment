@@ -54,7 +54,7 @@ pipeline {
 
         stage('Check Palindrome') {
             steps {
-                bat '"C:\\Path\\To\\Python\\python.exe" paly.py %NUMBER%'
+                bat '"C:\Users\wmrmw\AppData\Local\Programs\Python\Python313\python.exe" paly.py %NUMBER%'
             }
         }
 
