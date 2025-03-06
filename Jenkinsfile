@@ -21,9 +21,16 @@ pipeline {
 
         stage('Load Environment Variables') {
             steps {
-                bat 'call load_env.bat'
+                script {
+                    def envFile = readFile('.env').trim().split('\n')
+                        envFile.each { line ->
+                        def (key, value) = line.tokenize('=')
+                        env[key.trim()] = value.trim()
+                    }
+                }
             }
         }
+
 
         stage('Print Loaded Environment Variables') {
             steps {
