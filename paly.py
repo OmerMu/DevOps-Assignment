@@ -11,7 +11,7 @@ else:
     result = f"❌ The number {number} is NOT a palindrome."
     status = "red"
 
-# כתיבת התוצאה לקובץ HTML
+# HTML RESULT
 with open("output.html", "w") as f:
     f.write("<html><body>")
     f.write("<h1>Palindrome Check</h1>")
