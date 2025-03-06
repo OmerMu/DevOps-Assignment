@@ -14,6 +14,13 @@ pipeline {
 
     stages {
 
+        stage('Load Environment Variables') {
+            steps {
+                bat 'call load_env.bat'
+            }
+        }
+
+
         stage('Check .env file') {
             steps {
                 bat 'if exist .env (echo ✅ .env file found) else (echo ❌ ERROR: .env file NOT found & exit /b 1)'
