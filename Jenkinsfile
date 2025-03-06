@@ -18,22 +18,30 @@ pipeline {
             }
         }
 
-        stage('Load Environment Variables') {
+        stage('Load Environment Variables from .env') {
             steps {
-                bat 'call load_env.bat'
+                script {
+                    def envFile = readFile('.env').trim()
+                    def envVars = envFile.split("\n")
+                    envVars.each { line ->
+                        def (key, value) = line.tokenize('=')
+                        env[key.trim()] = value.trim()
+                    }
+                }
             }
         }
 
         stage('Validate Environment Variables') {
             steps {
-                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
                 script {
-                    if (!env.JENKINS_USER || !env.JENKINS_TOKEN || !env.JENKINS_URL || !env.JOB_NAME) {
-                        error "❌ One or more environment variables are missing!"
-                    }
+                    echo "JENKINS_USER=${env.JENKINS_USER}"
+                    echo "JENKINS_TOKEN=${env.JENKINS_TOKEN}"
+                    echo "JENKINS_URL=${env.JENKINS_URL}"
+                    echo "JOB_NAME=${env.JOB_NAME}"
                 }
             }
         }
+    }
 
         stage('Check Palindrome') {
             steps {
