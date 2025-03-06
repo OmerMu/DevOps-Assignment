@@ -3,7 +3,7 @@ import sys
 # קבלת מספר כפרמטר
 number = sys.argv[1]
 
-# בדיקה האם פלינדרום
+# check if its palyndrom
 if number == number[::-1]:
     result = f"✅ The number {number} is a palindrome."
     status = "green"
