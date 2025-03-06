@@ -21,9 +21,9 @@ pipeline {
         stage('Load Environment Variables') {
             steps {
                 bat '''
+                setlocal EnableDelayedExpansion
                 for /F "tokens=1,2 delims==" %%A in (.env) do (
-                    setx %%A %%B
-                    set %%A=%%B
+                    set "%%A=%%B"
                     echo Loaded: %%A=%%B
                 )
                 '''
@@ -33,17 +33,22 @@ pipeline {
         stage('Validate Environment Variables') {
             steps {
                 bat '''
-                echo JENKINS_USER=%JENKINS_USER%
-                echo JENKINS_TOKEN=%JENKINS_TOKEN%
-                echo JENKINS_URL=%JENKINS_URL%
-                echo JOB_NAME=%JOB_NAME%
+                echo JENKINS_USER=!JENKINS_USER!
+                echo JENKINS_TOKEN=!JENKINS_TOKEN!
+                echo JENKINS_URL=!JENKINS_URL!
+                echo JOB_NAME=!JOB_NAME!
                 '''
             }
         }
 
         stage('Check Python Installation') {
             steps {
-                bat 'where python || echo ❌ Python is not installed or not in PATH & exit /b 1'
+                bat '''
+                where python >nul 2>&1 || (
+                    echo ❌ Python is not installed or not in PATH.
+                    exit /b 1
+                )
+                '''
             }
         }
 
