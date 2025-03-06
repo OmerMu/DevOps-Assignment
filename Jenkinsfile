@@ -4,11 +4,7 @@ pipeline {
     stages {
         stage('Validate Parameters') {
             steps {
-                script {
-                    // Validate the ENVIRONMENT parameter
-                    if (!['dev','test','prod'].contains(params.ENVIRONMENT)) {
-                        error "❌ Invalid ENVIRONMENT value: ${params.ENVIRONMENT}"
-                    }
+
 
                     // Validate the NUMBER parameter
                     if (!params.NUMBER.isInteger()) {
