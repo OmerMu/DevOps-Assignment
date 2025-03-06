@@ -1,6 +1,6 @@
 import sys
 
-# קבלת מספר כפרמטר
+# get number as parameter
 number = sys.argv[1]
 
 # check if its palyndrom
