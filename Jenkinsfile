@@ -39,7 +39,6 @@ pipeline {
                         <h1>🔢 Palindrome Check Report</h1>
                         <p><strong>Number:</strong> ${number}</p>
                         ${result}
-                        <p><strong>Environment:</strong> ${params.ENVIRONMENT}</p>
                     </body>
                     </html>
                     """
