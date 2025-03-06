@@ -22,6 +22,7 @@ pipeline {
             steps {
                 bat '''
                 for /F "tokens=1,2 delims==" %%A in (.env) do (
+                    setx %%A %%B
                     set %%A=%%B
                     echo Loaded: %%A=%%B
                 )
@@ -40,9 +41,15 @@ pipeline {
             }
         }
 
+        stage('Check Python Installation') {
+            steps {
+                bat 'where python || echo ❌ Python is not installed or not in PATH & exit /b 1'
+            }
+        }
+
         stage('Check Palindrome') {
             steps {
-                bat 'python paly.py %NUMBER%'
+                bat '"C:\\Path\\To\\Python\\python.exe" paly.py %NUMBER%'
             }
         }
 
