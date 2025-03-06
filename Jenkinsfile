@@ -4,8 +4,7 @@ pipeline {
     stages {
         stage('Validate Parameters') {
             steps {
-
-
+                script {
                     // Validate the NUMBER parameter
                     if (!params.NUMBER.isInteger()) {
                         error "❌ Invalid NUMBER value: ${params.NUMBER} (must be an integer)"
@@ -17,7 +16,7 @@ pipeline {
         stage('Check Palindrome') {
             steps {
                 script {
-                    def number = params.NUMBER
+                    def number = params.NUMBER.toString()  // Ensure NUMBER is treated as a string
                     def reversed = number.reverse()
                     def isPalindrome = (number == reversed)
 
