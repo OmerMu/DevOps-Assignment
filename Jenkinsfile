@@ -6,10 +6,9 @@ pipeline {
     }
 
     stages {
-
         stage('Copy .env to Jenkins Workspace') {
             steps {
-                bat 'copy C:\\omer\\year3\\Devops\\DevOps-Assignment\\.env C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\DevOpsPrj\\.env /Y'
+                bat 'copy C:\omer\year3\Devops\DevOps-Assignment\.env %WORKSPACE%\.env /Y'
             }
         }
 
@@ -24,24 +23,13 @@ pipeline {
                 bat 'call load_env.bat'
             }
         }
-        stage('Print Loaded Environment Variables') {
-            steps {
-                bat 'set'
-            }
-        }
 
-
-        stage('Print .env contents') {
+        stage('Validate Environment Variables') {
             steps {
-                bat 'type .env'
-            }
-        }
-
-        stage('Validate Parameters') {
-            steps {
+                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
                 script {
-                    if (!params.NUMBER.isInteger()) {
-                        error "❌ Invalid NUMBER value: ${params.NUMBER} (must be an integer)"
+                    if (!env.JENKINS_USER || !env.JENKINS_TOKEN || !env.JENKINS_URL || !env.JOB_NAME) {
+                        error "❌ One or more environment variables are missing!"
                     }
                 }
             }
@@ -49,19 +37,17 @@ pipeline {
 
         stage('Check Palindrome') {
             steps {
+                bat 'python paly.py %NUMBER%'
+            }
+        }
+
+        stage('Generate HTML Report') {
+            steps {
                 script {
-                    def number = params.NUMBER.toString()
-                    def reversed = number.reverse()
-                    def isPalindrome = (number == reversed)
-
-                    def result = isPalindrome ? 
-                        "<p style='color:green;'>✅ The number ${number} is a palindrome.</p>" : 
-                        "<p style='color:red;'>❌ The number ${number} is NOT a palindrome.</p>"
-
-                    writeFile file: 'palindrome_report.html', text: """
+                    writeFile file: 'output.html', text: """
                     <html>
                     <head>
-                        <title>Palindrome Check</title>
+                        <title>Palindrome Check Report</title>
                         <style>
                             body { font-family: Arial, sans-serif; text-align: center; }
                             h1 { color: #333; }
@@ -81,10 +67,10 @@ pipeline {
                         </style>
                         <script>
                             function triggerJenkinsBuild() {
-                                fetch('${JENKINS_URL}/job/${JOB_NAME}/buildWithParameters?NUMBER=${number}', {
+                                fetch('${env.JENKINS_URL}/job/${env.JOB_NAME}/buildWithParameters?NUMBER=${params.NUMBER}', {
                                     method: 'POST',
                                     headers: {
-                                        'Authorization': 'Basic ' + btoa('${JENKINS_USER}:${JENKINS_TOKEN}')
+                                        'Authorization': 'Basic ' + btoa('${env.JENKINS_USER}:${env.JENKINS_TOKEN}')
                                     }
                                 }).then(response => {
                                     if (response.ok) {
@@ -100,8 +86,7 @@ pipeline {
                     </head>
                     <body>
                         <h1>🔢 Palindrome Check Report</h1>
-                        <p><strong>Number:</strong> ${number}</p>
-                        ${result}
+                        <p><strong>Number:</strong> ${params.NUMBER}</p>
                         <button onclick="triggerJenkinsBuild()">🔄 Run Again</button>
                     </body>
                     </html>
@@ -110,21 +95,15 @@ pipeline {
             }
         }
 
-        stage('Run Python Script') {
-            steps {
-                bat 'python palindrome.py %NUMBER%'  // התאמה להרצת פייתון ב-Windows
-            }
-        }
-
         stage('Archive & Publish Report') {
             steps {
-                archiveArtifacts artifacts: 'palindrome_report.html', fingerprint: true
+                archiveArtifacts artifacts: 'output.html', fingerprint: true
                 publishHTML (target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: '',
-                    reportFiles: 'palindrome_report.html',
+                    reportFiles: 'output.html',
                     reportName: 'Palindrome Report'
                 ])
             }
