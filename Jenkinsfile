@@ -1,22 +1,20 @@
 pipeline {
     agent any
 
-    environment {
-        JENKINS_USER = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
-        JENKINS_TOKEN = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
-        JENKINS_URL = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
-        JOB_NAME = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
-    }
 
     parameters {
         string(name: 'NUMBER', defaultValue: '12321', description: 'Enter a number to check if it is a palindrome')
     }
 
     stages {
-
         stage('Load Environment Variables') {
             steps {
                 bat 'call load_env.bat'
+            }
+        }
+        stage('Print Loaded Environment Variables') {
+            steps {
+                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
             }
         }
 
@@ -26,6 +24,14 @@ pipeline {
                 bat 'if exist .env (echo ✅ .env file found) else (echo ❌ ERROR: .env file NOT found & exit /b 1)'
             }
         }
+
+        stage('Load Environment Variables') {
+            steps {
+                bat 'call load_env.bat'
+            }
+        }
+
+
 
         stage('Print .env contents') {
             steps {
