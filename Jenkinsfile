@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        JENKINS_USER = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_USER" echo %%b', returnStdout: true).trim()
-        JENKINS_TOKEN = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_TOKEN" echo %%b', returnStdout: true).trim()
-        JENKINS_URL = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_URL" echo %%b', returnStdout: true).trim()
-        JOB_NAME = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JOB_NAME" echo %%b', returnStdout: true).trim()
+        JENKINS_USER = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
+        JENKINS_TOKEN = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
+        JENKINS_URL = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
+        JOB_NAME = bat(script: 'for /F "tokens=2 delims==" %%A in (".env") do @echo %%A', returnStdout: true).trim()
     }
 
     parameters {
