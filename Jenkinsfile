@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        JENKINS_USER = sh(script: "grep JENKINS_USER .env | cut -d '=' -f2", returnStdout: true).trim()
-        JENKINS_TOKEN = sh(script: "grep JENKINS_TOKEN .env | cut -d '=' -f2", returnStdout: true).trim()
-        JENKINS_URL = sh(script: "grep JENKINS_URL .env | cut -d '=' -f2", returnStdout: true).trim()
-        JOB_NAME = sh(script: "grep JOB_NAME .env | cut -d '=' -f2", returnStdout: true).trim()
+        JENKINS_USER = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_USER" echo %%b', returnStdout: true).trim()
+        JENKINS_TOKEN = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_TOKEN" echo %%b', returnStdout: true).trim()
+        JENKINS_URL = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JENKINS_URL" echo %%b', returnStdout: true).trim()
+        JOB_NAME = bat(script: 'for /f "tokens=2 delims==" %%a in (".env") do @if "%%a"=="JOB_NAME" echo %%b', returnStdout: true).trim()
     }
 
     parameters {
@@ -83,6 +83,12 @@ pipeline {
                     </html>
                     """
                 }
+            }
+        }
+
+        stage('Run Python Script') {
+            steps {
+                bat 'python palindrome.py %NUMBER%'  // התאמה להרצת פייתון ב-Windows
             }
         }
 
