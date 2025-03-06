@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Copy .env to Jenkins Workspace') {
             steps {
-                bat 'copy \"C:\\omer\\year3\\Devops\\DevOps-Assignment\\.env\" \"%WORKSPACE%\\.env\" /Y'
+                bat 'copy "C:\\omer\\year3\\Devops\\DevOps-Assignment\\.env" "%WORKSPACE%\\.env" /Y'
             }
         }
 
@@ -24,8 +24,12 @@ pipeline {
                     def envFile = readFile('.env').trim()
                     def envVars = envFile.split("\n")
                     envVars.each { line ->
-                        def (key, value) = line.tokenize('=')
-                        env[key.trim()] = value.trim()
+                        def parts = line.tokenize('=')
+                        if (parts.size() == 2) {
+                            def key = parts[0].trim()
+                            def value = parts[1].trim()
+                            env[key] = value
+                        }
                     }
                 }
             }
@@ -41,7 +45,6 @@ pipeline {
                 }
             }
         }
-    }
 
         stage('Check Palindrome') {
             steps {
@@ -126,4 +129,4 @@ pipeline {
             echo "❌ Build failed. Check logs and report (if generated)."
         }
     }
-
+}
