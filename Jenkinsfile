@@ -1,24 +1,11 @@
 pipeline {
     agent any
 
-
     parameters {
         string(name: 'NUMBER', defaultValue: '12321', description: 'Enter a number to check if it is a palindrome')
     }
 
     stages {
-        stage('Load Environment Variables') {
-            steps {
-                bat 'call load_env.bat'
-            }
-        }
-        stage('Print Loaded Environment Variables') {
-            steps {
-                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
-            }
-        }
-
-
         stage('Check .env file') {
             steps {
                 bat 'if exist .env (echo ✅ .env file found) else (echo ❌ ERROR: .env file NOT found & exit /b 1)'
@@ -31,14 +18,17 @@ pipeline {
             }
         }
 
-
+        stage('Print Loaded Environment Variables') {
+            steps {
+                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
+            }
+        }
 
         stage('Print .env contents') {
             steps {
                 bat 'type .env'
             }
         }
-
 
         stage('Validate Parameters') {
             steps {
