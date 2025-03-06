@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Copy .env to Jenkins Workspace') {
             steps {
-                bat 'copy C:\omer\year3\Devops\DevOps-Assignment\.env %WORKSPACE%\.env /Y'
+                bat 'copy \"C:\\omer\\year3\\Devops\\DevOps-Assignment\\.env\" \"%WORKSPACE%\\.env\" /Y'
             }
         }
 
