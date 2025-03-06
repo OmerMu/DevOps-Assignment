@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    parameters {
-        string(name: 'NUMBER', defaultValue: '12321', description: 'Enter a number to check if it is a palindrome')
-        string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Environment: dev/test/prod')
-    }
-
     stages {
         stage('Validate Parameters') {
             steps {
