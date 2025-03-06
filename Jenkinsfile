@@ -13,6 +13,20 @@ pipeline {
     }
 
     stages {
+
+        stage('Check .env file') {
+            steps {
+                bat 'if exist .env (echo ✅ .env file found) else (echo ❌ ERROR: .env file NOT found & exit /b 1)'
+            }
+        }
+
+        stage('Print .env contents') {
+            steps {
+                bat 'type .env'
+            }
+        }
+
+
         stage('Validate Parameters') {
             steps {
                 script {
