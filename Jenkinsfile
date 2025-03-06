@@ -24,14 +24,12 @@ pipeline {
                 bat 'call load_env.bat'
             }
         }
-
-
-
         stage('Print Loaded Environment Variables') {
             steps {
-                bat 'set JENKINS_USER && set JENKINS_TOKEN && set JENKINS_URL && set JOB_NAME'
+                bat 'set'
             }
         }
+
 
         stage('Print .env contents') {
             steps {
