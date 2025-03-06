@@ -18,31 +18,25 @@ pipeline {
             }
         }
 
-        stage('Load Environment Variables from .env') {
+        stage('Load Environment Variables') {
             steps {
-                script {
-                    def envFile = readFile('.env').trim()
-                    def envVars = envFile.split("\n")
-                    envVars.each { line ->
-                        def parts = line.tokenize('=')
-                        if (parts.size() == 2) {
-                            def key = parts[0].trim()
-                            def value = parts[1].trim()
-                            env[key] = value
-                        }
-                    }
-                }
+                bat '''
+                for /F "tokens=1,2 delims==" %%A in (.env) do (
+                    set %%A=%%B
+                    echo Loaded: %%A=%%B
+                )
+                '''
             }
         }
 
         stage('Validate Environment Variables') {
             steps {
-                script {
-                    echo "JENKINS_USER=${env.JENKINS_USER}"
-                    echo "JENKINS_TOKEN=${env.JENKINS_TOKEN}"
-                    echo "JENKINS_URL=${env.JENKINS_URL}"
-                    echo "JOB_NAME=${env.JOB_NAME}"
-                }
+                bat '''
+                echo JENKINS_USER=%JENKINS_USER%
+                echo JENKINS_TOKEN=%JENKINS_TOKEN%
+                echo JENKINS_URL=%JENKINS_URL%
+                echo JOB_NAME=%JOB_NAME%
+                '''
             }
         }
 
@@ -78,10 +72,10 @@ pipeline {
                         </style>
                         <script>
                             function triggerJenkinsBuild() {
-                                fetch('${env.JENKINS_URL}/job/${env.JOB_NAME}/buildWithParameters?NUMBER=${params.NUMBER}', {
+                                fetch('${JENKINS_URL}/job/${JOB_NAME}/buildWithParameters?NUMBER=${params.NUMBER}', {
                                     method: 'POST',
                                     headers: {
-                                        'Authorization': 'Basic ' + btoa('${env.JENKINS_USER}:${env.JENKINS_TOKEN}')
+                                        'Authorization': 'Basic ' + btoa('${JENKINS_USER}:${JENKINS_TOKEN}')
                                     }
                                 }).then(response => {
                                     if (response.ok) {
