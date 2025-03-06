@@ -6,6 +6,13 @@ pipeline {
     }
 
     stages {
+
+        stage('Copy .env to Jenkins Workspace') {
+            steps {
+                bat 'copy C:\\omer\\year3\\Devops\\DevOps-Assignment\\.env C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\DevOpsPrj\\.env /Y'
+            }
+        }
+
         stage('Check .env file') {
             steps {
                 bat 'if exist .env (echo ✅ .env file found) else (echo ❌ ERROR: .env file NOT found & exit /b 1)'
