@@ -2,46 +2,71 @@ pipeline {
     agent any
 
     parameters {
+        string(name: 'NUMBER', defaultValue: '12321', description: 'Enter a number to check if it is a palindrome')
         string(name: 'ENVIRONMENT', defaultValue: 'dev', description: 'Environment: dev/test/prod')
     }
 
     stages {
-        stage('Validate ENV') {
+        stage('Validate Parameters') {
             steps {
                 script {
                     // Validate the ENVIRONMENT parameter
                     if (!['dev','test','prod'].contains(params.ENVIRONMENT)) {
-                        error "Invalid ENVIRONMENT value: ${params.ENVIRONMENT}"
+                        error "❌ Invalid ENVIRONMENT value: ${params.ENVIRONMENT}"
+                    }
+
+                    // Validate the NUMBER parameter
+                    if (!params.NUMBER.isInteger()) {
+                        error "❌ Invalid NUMBER value: ${params.NUMBER} (must be an integer)"
                     }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Check Palindrome') {
             steps {
-                echo "Building for environment: ${params.ENVIRONMENT}"
+                script {
+                    def number = params.NUMBER
+                    def reversed = number.reverse()
+                    def isPalindrome = (number == reversed)
+
+                    // יצירת קובץ HTML עם התוצאה
+                    def result = isPalindrome ? 
+                        "<p style='color:green;'>✅ The number ${number} is a palindrome.</p>" : 
+                        "<p style='color:red;'>❌ The number ${number} is NOT a palindrome.</p>"
+
+                    writeFile file: 'palindrome_report.html', text: """
+                    <html>
+                    <head>
+                        <title>Palindrome Check</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; text-align: center; }
+                            h1 { color: #333; }
+                            .result { font-size: 20px; font-weight: bold; }
+                        </style>
+                    </head>
+                    <body>
+                        <h1>🔢 Palindrome Check Report</h1>
+                        <p><strong>Number:</strong> ${number}</p>
+                        ${result}
+                        <p><strong>Environment:</strong> ${params.ENVIRONMENT}</p>
+                    </body>
+                    </html>
+                    """
+                }
             }
         }
 
-        stage('Generate HTML Report') {
+        stage('Archive & Publish Report') {
             steps {
-                script {
-                    bat '''
-                      echo "<html><head><title>Build Report</title></head><body>" > build_report.html
-                      echo "<h1>Build Results</h1>" >> build_report.html
-                      echo "<p>params.Environment chosen: ${params.ENVIRONMENT}</p>" >> build_report.html
-                      echo "<p>View the link to results here: <a href='http://example.com'>Check results</a></p>" >> build_report.html
-                      echo "</body></html>" >> build_report.html
-                    '''
-                }
-                archiveArtifacts artifacts: 'build_report.html', fingerprint: true
+                archiveArtifacts artifacts: 'palindrome_report.html', fingerprint: true
                 publishHTML (target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
                     keepAll: true,
                     reportDir: '',
-                    reportFiles: 'build_report.html',
-                    reportName: 'Build Report'
+                    reportFiles: 'palindrome_report.html',
+                    reportName: 'Palindrome Report'
                 ])
             }
         }
@@ -49,10 +74,10 @@ pipeline {
 
     post {
         success {
-            echo "Build succeeded! Check the HTML report."
+            echo "✅ Build succeeded! Check the Palindrome Report."
         }
         failure {
-            echo "Build failed. Check logs and report (if generated)."
+            echo "❌ Build failed. Check logs and report (if generated)."
         }
     }
 }
